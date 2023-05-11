@@ -18,15 +18,12 @@ router.get('/', async (req, res) => {
 });
 
 //GET ONE BY ID ROUTE
-router.get('/:id', async (req, res) => {
+router.get('/tags/:id', async (req, res) => {
   try {
     // find a single tag by its `id`
-    const productData = await Product.findByPk(req.params.id, {
+    const tagData = await Tag.findByPk(req.params.id, {
       //retrieving a single tag with its associated Product Tag and Tag data, including the join table data stored in the ProductTag model.
-      include: [
-        { model: Tag, through: ProductTag },
-        { model: ProductTag }
-      ],
+      include: [ Product ],
     });
 
     if (!tagData) {
@@ -51,7 +48,7 @@ router.post('/tags', async (req, res) => {
 });
 
 // PUT/UPDATE NAME BY ID ROUTE
-router.put('/:id', async (req, res) => {
+router.put('/tags/:id', async (req, res) => {
   try {
     const tagData = await Tag.update(
       { tag_name: req.body.tag_name }, //requesting in the body where tag_name is
@@ -68,7 +65,7 @@ router.put('/:id', async (req, res) => {
 });
 
 //DELETE BY ID ROUTE
-router.delete('/:id', async (req, res) => {
+router.delete('/tags/:id', async (req, res) => {
   try {
     const tagData = await Tag.destroy({
       where: {

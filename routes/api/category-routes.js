@@ -1,14 +1,14 @@
 const router = require('express').Router();
-const { Category } = require('../../models');
+const { Category, Product } = require('../../models')
 
 //GET ALL ROUTE
-router.get('/', async (req, res) => {
+router.get('/category', async (req, res) => {
   try {
     // find all categories
     const categoryData = await Category.findAll({
       include: [
         //its associated data, only the Category model (PK)
-        { model: Category,}
+        { model: Category, }
       ],
     });
     res.status(200).json(categoryData);
@@ -18,23 +18,23 @@ router.get('/', async (req, res) => {
 });
 
 //GET ONE BY ID ROUTE
-router.get('/:id', async (req, res) => {
+router.get('/category/:id', async (req, res) => {
   try {
-   // find one category by its `id` value
+    // find one category by its `id` value
     const categoryData = await Category.findByPk(req.params.id, {
       //retrieving a single category
-      include: [
-        { model: Category }
-      ],
-  });  
-  if (!categoryData) {
-    res.status(404).json({ message: 'No category found with that id!' });
-    return;
-  }
+      //eager loading, where you load the associated data with a single query rather than issuing separate queries for each associated model
+      include: [Product],
+
+    });
+    if (!categoryData) {
+      res.status(404).json({ message: 'No category found with that id!' });
+      return;
+    }
 
     res.status(200).json(categoryData);
   } catch (err) {
-  res.status(500).json(err);
+    res.status(500).json(err);
   }
 });
 
@@ -49,7 +49,7 @@ router.post('/category', async (req, res) => {
 });
 
 // PUT/UPDATE NAME BY ID ROUTE
-router.put('/:id', async (req, res) => {
+router.put('/category/:id', async (req, res) => {
   try {
     const categoryData = await Category.update(
       { category_name: req.body.category_name }, //requesting in the body where category_name is
@@ -66,13 +66,11 @@ router.put('/:id', async (req, res) => {
 });
 
 //DELETE BY ID ROUTE
-router.delete('/:id', async (req, res) => {
+router.delete('/category/:id', async (req, res) => {
   // delete a category by its `id` value
   try {
     const categoryData = await Category.destroy({
-      where: {
-        id: req.params.id
-      }
+      where: { id: req.params.id }
     });
 
     if (!categoryData) {

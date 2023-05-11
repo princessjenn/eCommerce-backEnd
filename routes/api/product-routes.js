@@ -1,10 +1,11 @@
-const router = require('express').Router();
+const express = require('express');
+const router = express.Router();
 const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // The `/api/products` endpoint
 
 //GET ALL ROUTE
-  router.get('/', async (req, res) => {
+  router.get('/products', async (req, res) => {
     try {
       const productData = await Product.findAll({
         include: [
@@ -21,14 +22,15 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 
 
 //GET ONE BY ID ROUTE
-router.get('/:id', async (req, res) => {
+router.get('/products/:id', async (req, res) => {
   try {
     const productData = await Product.findByPk(req.params.id, {
       //retrieving a single product with its associated Category and Tag data, including the join table data stored in the ProductTag model.
       include: [
         { model: Category },
-        { model: Tag, through: ProductTag },
-        { model: ProductTag }
+        { model: Tag, through: ProductTag,
+          attributes: ['id', 'tag_name']
+        },
       ],
     });
 
@@ -48,39 +50,20 @@ router.get('/:id', async (req, res) => {
 router.post('/products', async (req, res) => {
   try {
     //values from the req body
-    const { product_name, price, stock, category_id, tagIds } = req.body;
-    const product = await Product.create({
-      product_name,
-      price,
-      stock,
-      category_id
-    });
-
-    //If id of tags were provided, corresponding tags will be added to product!
-    //Checks if there are any tagIds provided, and whether the tagIds array has a length greater than 0. If it does, it queries the Tag model to find all tags with ids that match the values in the array
-    //then, the method creates a new record in the ProductTag join table that links the product and tag models together
-    if (tagIds && tagIds.length) {
-      const tags = await Tag.findAll({ where: { id: tagIds } });
-      await product.addTags(tags);
-    }
-    //new product created with Category and Tag models included
-    const newProduct = await Product.findByPk(product.id, {
-      include: [
-        { model: Category },
-        { model: Tag }
-      ]
-    });
-
+    const productData = await Product.create(req.body);
    //responds OK with new product
-    res.status(200).json(newProduct); 
+    res.status(200).json(productData); 
   } catch (error) {
     console.error(error);
     //or if server error, responds w/ server error message
-    res.status(500).json({ message: 'Internal server error' }); 
+    res.status(500).json(err); 
   }
 });
 
 //BULK CREATE
+//I created a route for Product.bulkCreate() method instead of Product.create()
+router.post('/products', (req, res) => {
+  const { product_name, price, stock, tagIds } = req.body;
   Product.create(req.body)
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
@@ -100,18 +83,19 @@ router.post('/products', async (req, res) => {
     .catch((err) => {
       console.log(err);
       res.status(400).json(err);
+    });
 });
 
 
 // PUT/UPDATE BY ID ROUTE
-router.put('/:id', (req, res) => {
+router.put('/products/:id', (req, res) => {
   // update product data
   Product.update(req.body, {
     where: {
       id: req.params.id,
     },
   })
-    .then((product) => {
+    .then(() => {
       // find all associated tags from ProductTag
       return ProductTag.findAll({ where: { product_id: req.params.id } });
     })
@@ -135,14 +119,23 @@ router.put('/:id', (req, res) => {
 
       // run both actions
       return Promise.all([
-
         //destroy = delete product tags
         ProductTag.destroy({ where: { id: productTagsToRemove } }),
         // create new product tags
         ProductTag.bulkCreate(newProductTags),
+        // fetch updated product data with associated tags
+        Product.findByPk(req.params.id, {
+          include: [
+            { model: Category },
+            { model: Tag, through: ProductTag },
+          ],
+        }),
       ]);
     })
-    .then((updatedProductTags) => res.json(updatedProductTags))
+    .then(([destroyedProductTags, createdProductTags, updatedProductData]) => {
+      // return updated product data
+      res.json(updatedProductData);
+    })
     .catch((err) => {
       // console.log(err);
       res.status(400).json(err);
@@ -150,7 +143,7 @@ router.put('/:id', (req, res) => {
 });
 
 //DELETE ONE BY ID ROUTE
-router.delete('/:id', async (req, res) => {
+router.delete('/products/:id', async (req, res) => {
   try {
     const productData = await Product.destroy({
       where: {
