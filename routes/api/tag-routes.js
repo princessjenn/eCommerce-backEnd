@@ -12,13 +12,13 @@ router.get('/', async (req, res) => {
       ],
     });
     res.status(200).json(tagData);
-  } catch (err) {
-    res.status(500).json(err);
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 
 //GET ONE BY ID ROUTE
-router.get('/tags/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     // find a single tag by its `id`
     const tagData = await Tag.findByPk(req.params.id, {
@@ -32,8 +32,8 @@ router.get('/tags/:id', async (req, res) => {
     }
 
     res.status(200).json(tagData);
-  } catch (err) {
-    res.status(500).json(err);
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 
@@ -42,8 +42,8 @@ router.post('/tags', async (req, res) => {
   try {
     const tagData = await Tag.create(req.body);
     res.status(200).json(tagData);
-  } catch (err) {
-    res.status(400).json(err);
+  } catch (error) {
+    res.status(400).json(error);
   }
 });
 
@@ -59,8 +59,8 @@ router.put('/tags/:id', async (req, res) => {
       return;
     }
     res.status(200).json(tagData);
-  } catch (err) {
-    res.status(500).json(err);
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 
@@ -79,8 +79,8 @@ router.delete('/tags/:id', async (req, res) => {
     }
 
     res.status(200).json({ message: 'Tag deleted successfully!' });
-  } catch (err) {
-    res.status(500).json(err);
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 

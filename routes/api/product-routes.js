@@ -1,5 +1,4 @@
-const express = require('express');
-const router = express.Router();
+const router = require('express').Router();
 const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // The `/api/products` endpoint
@@ -15,8 +14,8 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
         ]
     });
       res.status(200).json(productData);
-    } catch (err) {
-      res.status(500).json(err);
+    } catch (error) {
+      res.status(500).json(error);
     }
   });
 
@@ -40,8 +39,8 @@ router.get('/products/:id', async (req, res) => {
     }
 
     res.status(200).json(productData);
-  } catch (err) {
-    res.status(500).json(err);
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 
@@ -56,36 +55,9 @@ router.post('/products', async (req, res) => {
   } catch (error) {
     console.error(error);
     //or if server error, responds w/ server error message
-    res.status(500).json(err); 
+    res.status(500).json(error); 
   }
 });
-
-//BULK CREATE
-//I created a route for Product.bulkCreate() method instead of Product.create()
-router.post('/products', (req, res) => {
-  const { product_name, price, stock, tagIds } = req.body;
-  Product.create(req.body)
-    .then((product) => {
-      // if there's product tags, we need to create pairings to bulk create in the ProductTag model
-      if (req.body.tagIds.length) {
-        const productTagIdArr = req.body.tagIds.map((tag_id) => {
-          return {
-            product_id: product.id,
-            tag_id,
-          };
-        });
-        return ProductTag.bulkCreate(productTagIdArr);
-      }
-      // if no product tags, just respond
-      res.status(200).json(product);
-    })
-    .then((productTagIds) => res.status(200).json(productTagIds))
-    .catch((err) => {
-      console.log(err);
-      res.status(400).json(err);
-    });
-});
-
 
 // PUT/UPDATE BY ID ROUTE
 router.put('/products/:id', (req, res) => {
@@ -132,13 +104,13 @@ router.put('/products/:id', (req, res) => {
         }),
       ]);
     })
-    .then(([destroyedProductTags, createdProductTags, updatedProductData]) => {
+    .then(([updatedProductData]) => {
       // return updated product data
       res.json(updatedProductData);
     })
-    .catch((err) => {
-      // console.log(err);
-      res.status(400).json(err);
+    .catch((error) => {
+      // console.log(error);
+      res.status(400).json(error);
     });
 });
 
@@ -156,8 +128,8 @@ router.delete('/products/:id', async (req, res) => {
     }
     //product id located, and deleted
     res.status(200).json({ message: 'Product deleted successfully!' }); //200 OK
-  } catch (err) {
-    res.status(500).json(err); // or internal server error
+  } catch (error) {
+    res.status(500).json(error); // or internal server error
   }
 });
 

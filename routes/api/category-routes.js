@@ -12,8 +12,8 @@ router.get('/category', async (req, res) => {
       ],
     });
     res.status(200).json(categoryData);
-  } catch (err) {
-    res.status(500).json(err);
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 
@@ -33,8 +33,8 @@ router.get('/category/:id', async (req, res) => {
     }
 
     res.status(200).json(categoryData);
-  } catch (err) {
-    res.status(500).json(err);
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 
@@ -43,8 +43,8 @@ router.post('/category', async (req, res) => {
   try {
     const categoryData = await Category.create(req.body);
     res.status(200).json(categoryData);
-  } catch (err) {
-    res.status(400).json(err);
+  } catch (error) {
+    res.status(400).json(error);
   }
 });
 
@@ -60,8 +60,8 @@ router.put('/category/:id', async (req, res) => {
       return;
     }
     res.status(200).json(categoryData);
-  } catch (err) {
-    res.status(500).json(err);
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 
@@ -79,8 +79,8 @@ router.delete('/category/:id', async (req, res) => {
     }
 
     res.status(200).json({ message: 'Category deleted successfully!' });
-  } catch (err) {
-    res.status(500).json(err);
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 
