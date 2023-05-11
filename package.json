@@ -1,8 +1,14 @@
 {
-  "name": "module-13-challenge-orm",
+  "name": "ecommerce-backend",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mysql2": "^3.3.0",
+    "sequelize": "^6.31.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
@@ -11,18 +17,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@work.github.com:coding-boot-camp/module-13-challenge-orm.git"
+    "url": "https://github.com/princessjenn/eCommerce-backEnd.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "nodemon": "^2.0.3"
+  "keywords": [
+    ""
+  ],
+  "author": "Jennifer_Eckenrode <j.eckenrode@me.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/princessjenn/eCommerce-backEnd/issues"
   },
-  "dependencies": {
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "mysql2": "^2.1.0",
-    "sequelize": "^5.21.7"
-  }
+  "homepage": "https://github.com/princessjenn/eCommerce-backEnd#readme"
 }
