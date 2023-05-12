@@ -2,13 +2,13 @@ const router = require('express').Router();
 const { Category, Product } = require('../../models')
 
 //GET ALL ROUTE
-router.get('/category', async (req, res) => {
+router.get('/categories', async (req, res) => {
   try {
     // find all categories
     const categoryData = await Category.findAll({
       include: [
-        //its associated data, only the Category model (PK)
-        { model: Category, }
+        // include any associated Products
+        { model: Product }
       ],
     });
     res.status(200).json(categoryData);
@@ -18,7 +18,7 @@ router.get('/category', async (req, res) => {
 });
 
 //GET ONE BY ID ROUTE
-router.get('/category/:id', async (req, res) => {
+router.get('/categories/:id', async (req, res) => {
   try {
     // find one category by its `id` value
     const categoryData = await Category.findByPk(req.params.id, {
@@ -39,7 +39,7 @@ router.get('/category/:id', async (req, res) => {
 });
 
 // POST/CREATE ROUTE
-router.post('/category', async (req, res) => {
+router.post('/categories', async (req, res) => {
   try {
     const categoryData = await Category.create(req.body);
     res.status(200).json(categoryData);
@@ -49,7 +49,7 @@ router.post('/category', async (req, res) => {
 });
 
 // PUT/UPDATE NAME BY ID ROUTE
-router.put('/category/:id', async (req, res) => {
+router.put('/categories/:id', async (req, res) => {
   try {
     const categoryData = await Category.update(
       { category_name: req.body.category_name }, //requesting in the body where category_name is
@@ -66,7 +66,7 @@ router.put('/category/:id', async (req, res) => {
 });
 
 //DELETE BY ID ROUTE
-router.delete('/category/:id', async (req, res) => {
+router.delete('/categories/:id', async (req, res) => {
   // delete a category by its `id` value
   try {
     const categoryData = await Category.destroy({
