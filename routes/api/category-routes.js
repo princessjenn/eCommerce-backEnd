@@ -6,10 +6,11 @@ router.get('/categories', async (req, res) => {
   try {
     // find all categories
     const categoryData = await Category.findAll({
-      include: [
+      include: [{
         // include any associated Products
-        { model: Product }
-      ],
+         model: Product,
+         attributes: ["id", "product_name", "price", "stock", "category_id"]
+      }]
     });
     res.status(200).json(categoryData);
   } catch (error) {
@@ -23,15 +24,18 @@ router.get('/categories/:id', async (req, res) => {
     // find one category by its `id` value
     const categoryData = await Category.findByPk(req.params.id, {
       //retrieving a single category
-      //eager loading, where you load the associated data with a single query rather than issuing separate queries for each associated model
-      include: [Product],
-
+      attributes: ["id", "category_name"],
+          include: [{
+            model: Product,
+              attributes: ["id", "product_name", "price", "stock", "category_id"],
+          }
+        ],
     });
+
     if (!categoryData) {
       res.status(404).json({ message: 'No category found with that id!' });
       return;
     }
-
     res.status(200).json(categoryData);
   } catch (error) {
     res.status(500).json(error);
@@ -51,11 +55,10 @@ router.post('/categories', async (req, res) => {
 // PUT/UPDATE NAME BY ID ROUTE
 router.put('/categories/:id', async (req, res) => {
   try {
-    const categoryData = await Category.update(
-      { category_name: req.body.category_name }, //requesting in the body where category_name is
-      { where: { id: req.params.id } }// further into where specfic id of category is
+    const categoryData = await Category.update(req.body,
+      { where: { id: req.params.id } }//into where specfic id of category is
     );
-    if (!categoryData[0]) { //checking 'categoryData' array for category data returned from db, and if it's empty, there is no category specified
+      if (categoryData === null || !categoryData[0]) { //checking 'categoryData' array for category data returned from db, and if it's empty, there is no category specified
       res.status(404).json({ message: 'Category id not found.' });
       return;
     }
