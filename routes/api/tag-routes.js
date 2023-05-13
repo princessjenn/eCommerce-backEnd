@@ -2,14 +2,17 @@ const router = require('express').Router();
 const { Tag, Product, ProductTag } = require('../../models');
 
 //GET ALL ROUTE
-router.get('/', async (req, res) => {
+router.get('/tags', async (req, res) => {
   try {
     // find all tags
     const tagData = await Tag.findAll({
-      include: [
-        //its associated Product data
-        { model: Product, through: ProductTag }
-      ],
+			attributes: ["id", "tag_name"],
+			include: [{
+				model: Product,
+				attributes: ["id", "product_name", "price", "stock", "category_id"],
+				through: "ProductTag",
+			},
+    ],
     });
     res.status(200).json(tagData);
   } catch (error) {
@@ -23,7 +26,11 @@ router.get('/:id', async (req, res) => {
     // find a single tag by its `id`
     const tagData = await Tag.findByPk(req.params.id, {
       //retrieving a single tag with its associated Product Tag and Tag data, including the join table data stored in the ProductTag model.
-      include: [ Product ],
+			include: [{
+				model: Product,
+				attributes: ["id", "product_name", "price", "stock", "category_id"],
+				through: "ProductTag",
+			}],
     });
 
     if (!tagData) {
@@ -40,7 +47,8 @@ router.get('/:id', async (req, res) => {
 // POST/CREATE ROUTE  
 router.post('/tags', async (req, res) => {
   try {
-    const tagData = await Tag.create(req.body);
+    //new row in the tags table with the tag_name provided in the request body
+    const tagData = await Tag.create({tag_name: req.body.tag_name});
     res.status(200).json(tagData);
   } catch (error) {
     res.status(400).json(error);
@@ -68,9 +76,7 @@ router.put('/tags/:id', async (req, res) => {
 router.delete('/tags/:id', async (req, res) => {
   try {
     const tagData = await Tag.destroy({
-      where: {
-        id: req.params.id
-      }
+      where: {id: req.params.id}
     });
 
     if (!tagData) {
