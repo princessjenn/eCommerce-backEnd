@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { Tag, Product, ProductTag } = require('../../models');
 
 //GET ALL ROUTE
-router.get('/tags', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     // find all tags
     const tagData = await Tag.findAll({
@@ -45,7 +45,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST/CREATE ROUTE  
-router.post('/tags', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     //new row in the tags table with the tag_name provided in the request body
     const tagData = await Tag.create({tag_name: req.body.tag_name});
@@ -56,7 +56,7 @@ router.post('/tags', async (req, res) => {
 });
 
 // PUT/UPDATE NAME BY ID ROUTE
-router.put('/tags/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const tagData = await Tag.update(
       { tag_name: req.body.tag_name }, //requesting in the body where tag_name is
@@ -73,7 +73,7 @@ router.put('/tags/:id', async (req, res) => {
 });
 
 //DELETE BY ID ROUTE
-router.delete('/tags/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const tagData = await Tag.destroy({
       where: {id: req.params.id}
