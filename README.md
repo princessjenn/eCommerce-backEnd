@@ -4,12 +4,14 @@
 ## Description
 
 Repository Link:
+
 (https://github.com/princessjenn/eCommerce-backEnd.git)
 
 Demo Walkthrough Video Link:
+
 (https://drive.google.com/file/d/1woUtnGcPe3NtoWHof0WC984tjiG0tO7q/view?usp=sharing)
 
-My challenge is to build the back end for an e-commerce site. I took a working Express.js API and configured it to use Sequelize, and to interact with a MySQL database.
+My challenge was to build the back end for an e-commerce site. I took a working Express.js API and configured it to use Sequelize, and to interact with a MySQL database.
 
 ## Table of Contents
 
@@ -74,15 +76,15 @@ Thanks so much for contributing!
 
 ## Tests
 
- Testing and getting a 500 error:
+ Testing and being sent back a '500 Internal Server error' response:
 
 ![Server-Error Test](./images/getId-serverError.png)
 
-Finally my Product Table from my database displaying on the Endpoint successfully:
+Finally, my Product Table from my Ecommerce database displaying on the 'GET Products' endpoint successfully:
 
 ![Products-200](./images/Products-displayed-properly.png)
 
-More of my 200 responses, with Get Tags:
+One more confirmed '200 OK' response when the delete Tag route exceuted successfully:
 
 ![Products-200](./images/200-OK-response.png)
 
